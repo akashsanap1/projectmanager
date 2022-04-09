@@ -1,9 +1,10 @@
 package com.projectmanager.service;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import com.projectmanager.entity.Projects;
 import com.projectmanager.entity.SystemUser;
 import com.projectmanager.repository.ProjectRepository;
@@ -33,11 +34,19 @@ public class ServiceImpl implements Service {
 	}
 	
 	@Autowired
-	private ProjectRepository prepository;
+	private ProjectRepository projectRepository;
 	
 	@Override
-	public Projects saveall(Projects projects) {
-		return prepository.save(projects);
+	public Projects saveAll(Projects projects) {
+		return projectRepository.save(projects);
 	}
+	
+	@Override
+	public List<Projects> findAll() {
+        List<Projects> projectList = new ArrayList<>();
+        projectRepository.findAll().forEach(projectList::add);
+        return projectList;
+        
+    }
 	
 }

@@ -1,6 +1,8 @@
 package com.projectmanager.service;
 
 
+import java.util.List;
+
 import com.projectmanager.entity.Projects;
 import com.projectmanager.entity.SystemUser;
 
@@ -11,5 +13,8 @@ public interface Service {
 
 	public SystemUser fetchUserByEmailIdAndPassword(String email, String password);
 	
-	Projects saveall(Projects projects);
+	Projects saveAll(Projects projects);
+	
+	public List<Projects> findAll();
+	
 }
