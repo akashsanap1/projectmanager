@@ -15,7 +15,7 @@ import com.projectmanager.service.ServiceImpl;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping("api/v1")
+@RequestMapping("user")
 public class SystemUserController {
 
 	@Autowired

@@ -36,7 +36,7 @@ public class ServiceImpl implements Service {
 	private ProjectRepository prepository;
 	
 	@Override
-	public Projects saveall(Projects projects) {
+	public Projects saveAll(Projects projects) {
 		return prepository.save(projects);
 	}
 	

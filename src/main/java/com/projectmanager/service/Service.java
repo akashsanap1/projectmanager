@@ -11,5 +11,5 @@ public interface Service {
 
 	public SystemUser fetchUserByEmailIdAndPassword(String email, String password);
 	
-	Projects saveall(Projects projects);
+	Projects saveAll(Projects projects);
 }

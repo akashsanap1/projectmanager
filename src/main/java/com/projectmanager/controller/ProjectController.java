@@ -15,7 +15,7 @@ import com.projectmanager.service.Service;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping("api/v2")
+@RequestMapping("projects")
 public class ProjectController {
 
 	@Autowired
@@ -26,10 +26,10 @@ public class ProjectController {
 //		
 //		return new ResponseEntity<Projects>(service.saveall(user) ,HttpStatus.CREATED);
 //		}
-	@PostMapping("/projects")
+	@PostMapping("/addproject")
 	public Projects registerUser(@RequestBody Projects user) {
 	
-	return service.saveall(user);
+	return service.saveAll(user);
 	}
 
 	
