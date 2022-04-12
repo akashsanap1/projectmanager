@@ -3,6 +3,8 @@ package com.projectmanager.entity;
 import java.sql.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -11,14 +13,13 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class Projects {
 
 	
-	// @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
 	int pId;
 	String pName;
 	String pDescription;
 	String teamSize;
 	String teamLimit;
-
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	Date startDate;
 

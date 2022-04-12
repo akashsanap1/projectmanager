@@ -22,15 +22,16 @@ public class ProjectController {
 	@Autowired
 	private Service service;
 
-	@PostMapping("/addproject")
-	public Projects registerUser(@RequestBody Projects user) {
-		return service.saveAll(user);
-	}
-	
+	// Get whole data of projects for table - > available_projects
 	@GetMapping("/projectslist")
     public ResponseEntity<List<Projects>> getProject() {
         List<Projects> projectList= service.findAll();
         return ResponseEntity.ok(projectList);
     }
 
+	// to add project
+	@PostMapping("/projects")
+	public ResponseEntity<Projects> registerUser(@RequestBody Projects user) {
+		return new ResponseEntity<Projects>(service.saveAll(user) ,HttpStatus.CREATED);
+		}
 }
