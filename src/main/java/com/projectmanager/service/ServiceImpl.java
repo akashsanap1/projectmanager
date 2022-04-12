@@ -1,9 +1,10 @@
 package com.projectmanager.service;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import com.projectmanager.entity.Projects;
 import com.projectmanager.entity.SystemUser;
 import com.projectmanager.repository.ProjectRepository;
@@ -16,6 +17,9 @@ public class ServiceImpl implements Service {
 	@Autowired
 	private Repository repository;
 
+	@Autowired
+	private ProjectRepository projectRepository;
+	
 	@Override
 	public SystemUser saveUser(SystemUser user) {
 		// TODO Auto-generated method stub
@@ -32,12 +36,21 @@ public class ServiceImpl implements Service {
 		return repository.findByEmailIdAndPassword(emailId,password);
 	}
 	
-	@Autowired
-	private ProjectRepository prepository;
+	
 	
 	@Override
 	public Projects saveAll(Projects projects) {
-		return prepository.save(projects);
+
+		return projectRepository.save(projects);
+
 	}
+	
+	@Override
+	public List<Projects> findAll() {
+        List<Projects> projectList = new ArrayList<>();
+        projectRepository.findAll().forEach(projectList::add);
+        return projectList;
+        
+    }
 	
 }
