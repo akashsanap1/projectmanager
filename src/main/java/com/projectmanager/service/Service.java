@@ -4,13 +4,16 @@ package com.projectmanager.service;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.validation.constraints.Email;
 
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.projectmanager.entity.Documents;
 import com.projectmanager.entity.Leaves;
 import com.projectmanager.entity.Profile;
 import com.projectmanager.entity.Projects;
@@ -53,4 +56,12 @@ public interface Service {
 	public void sendMail(String email, String subject, String body);
 	
 	public List<Task> getTasksData();
+	
+	public Documents store(MultipartFile file) throws IOException;
+	
+	public Documents getFile(int id);
+	
+	public Stream<Documents> getAllFiles();
+	
+	public List<Documents> getDocumentData();
 }

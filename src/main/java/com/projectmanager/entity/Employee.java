@@ -11,7 +11,7 @@ import javax.persistence.Lob;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-public class Profile {
+public class Employee {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +20,7 @@ public class Profile {
 	private String skillSet;
 	private String experience;
 	private int currentProjectId;
-	private String currentProject;
+	private String currentProjectName;
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	Date releaseDate;
 	private String emailId;
@@ -70,12 +70,12 @@ public class Profile {
 		this.currentProjectId = currentProjectId;
 	}
 
-	public String getCurrentProject() {
-		return currentProject;
+	public String getCurrentProjectName() {
+		return currentProjectName;
 	}
 
-	public void setCurrentProject(String currentProject) {
-		this.currentProject = currentProject;
+	public void setCurrentProjectName(String currentProjectName) {
+		this.currentProjectName = currentProjectName;
 	}
 
 	public Date getReleaseDate() {
@@ -126,16 +126,16 @@ public class Profile {
 		this.data = data;
 	}
 
-	public Profile(int profileId, int userid, String skillSet, String experience, int currentProjectId,
-			String currentProject, Date releaseDate, String emailId, String fileName, String fileType, String userName,
-			byte[] data) {
+	public Employee(int profileId, int userid, String skillSet, String experience, int currentProjectId,
+			String currentProjectName, Date releaseDate, String emailId, String fileName, String fileType,
+			String userName, byte[] data) {
 		super();
 		this.profileId = profileId;
 		this.userid = userid;
 		this.skillSet = skillSet;
 		this.experience = experience;
 		this.currentProjectId = currentProjectId;
-		this.currentProject = currentProject;
+		this.currentProjectName = currentProjectName;
 		this.releaseDate = releaseDate;
 		this.emailId = emailId;
 		this.fileName = fileName;
@@ -144,14 +144,7 @@ public class Profile {
 		this.data = data;
 	}
 
-	public Profile(String fileName, String fileType, byte[] data) {
-		super();
-		this.fileName = fileName;
-		this.fileType = fileType;
-		this.data = data;
-	}
-
-	public Profile() {
+	public Employee() {
 		super();
 	}
 

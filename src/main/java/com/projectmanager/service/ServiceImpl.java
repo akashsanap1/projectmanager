@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.stream.Stream;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -20,37 +21,40 @@ import javax.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.projectmanager.entity.Documents;
 import com.projectmanager.entity.Leaves;
 import com.projectmanager.entity.Profile;
 import com.projectmanager.entity.Projects;
 import com.projectmanager.entity.SystemUser;
 import com.projectmanager.entity.Task;
+import com.projectmanager.repository.DocumentRepository;
 import com.projectmanager.repository.LeaveRepository;
 import com.projectmanager.repository.ProfileRepository;
 import com.projectmanager.repository.ProjectRepository;
 import com.projectmanager.repository.Repository;
 import com.projectmanager.repository.TaskRepository;
 
-
 @org.springframework.stereotype.Service
 public class ServiceImpl implements Service {
 
 	@Autowired
 	private Repository repository;
-	
+
 	@Autowired
 	private LeaveRepository leaveRepository;
-	
+
 	@Autowired
 	private ProfileRepository profileRepository;
 
 	@Autowired
 	private ProjectRepository projectRepository;
-	
+
 	@Autowired
 	private TaskRepository taskRepository;
-	
+
 	@Override
 	public SystemUser saveUser(SystemUser user) {
 		// TODO Auto-generated method stub
@@ -59,16 +63,14 @@ public class ServiceImpl implements Service {
 
 	@Override
 	public SystemUser fetchUserByEmailId(String emailId) {
-		 return repository.findByEmailId(emailId);
+		return repository.findByEmailId(emailId);
 	}
 
 	@Override
 	public SystemUser fetchUserByEmailIdAndPassword(String emailId, String password) {
-		return repository.findByEmailIdAndPassword(emailId,password);
+		return repository.findByEmailIdAndPassword(emailId, password);
 	}
-	
-	
-	
+
 	// to add project
 	@Override
 	public Projects saveAll(Projects projects) {
@@ -76,62 +78,61 @@ public class ServiceImpl implements Service {
 		return projectRepository.save(projects);
 
 	}
-	
+
 	@Override
 	public List<Projects> findAll() {
-        List<Projects> projectList = new ArrayList<>();
-        projectRepository.findAll().forEach(projectList::add);
-        return projectList;
-        
-    }
+		List<Projects> projectList = new ArrayList<>();
+		projectRepository.findAll().forEach(projectList::add);
+		return projectList;
+
+	}
 
 	@Override
 	public Leaves saveLeave(Leaves leaves) {
-			return leaveRepository.save(leaves);
-		
+		return leaveRepository.save(leaves);
+
 	}
 
 	@Override
 	public Profile saveProfile(Profile profile) {
-		Profile profile2=profileRepository.save(profile);
+		Profile profile2 = profileRepository.save(profile);
 		return profile2;
 	}
 
 	@Override
 	public Profile getProfile(String emailId) {
-		
+
 		Profile profile = profileRepository.findByEmailId(emailId);
-        if (profile!=null) {
-            return profile;
-        } else {
-            return null;
-        }
+		if (profile != null) {
+			return profile;
+		} else {
+			return null;
+		}
 	}
 
 	@Override
 	public List<Leaves> getLeavesData() {
 		List<Leaves> leaves = new ArrayList<>();
-        leaveRepository.findAll().forEach(leaves::add);
-        return leaves;
+		leaveRepository.findAll().forEach(leaves::add);
+		return leaves;
 	}
-	
+
 //	@Override
 //	public List<LeavesDetails> findAll() {
 //		List<LeavesDetails> leavesList = new ArrayList<>();
 //		leaveRepo.findAll().forEach(leavesList::add);
 //		return leavesList;
 //	}
-	
-	
+
 	// update leave after decline by project managee
 	@Override
-	public Leaves update(Leaves leaves,int id) {
+	public Leaves update(Leaves leaves, int id) {
 		Leaves olddata = null;
 		Optional<Leaves> optionaluser = leaveRepository.findById(id);
 		if (optionaluser.isPresent()) {
 			olddata = optionaluser.get();
 			System.out.println(olddata);
-			//olddata.setDescription(leaves.getDescription());
+			// olddata.setDescription(leaves.getDescription());
 			olddata.setReason(leaves.getReason());
 			olddata.setStatus(leaves.getStatus());
 			leaveRepository.save(olddata);
@@ -140,8 +141,7 @@ public class ServiceImpl implements Service {
 		}
 		return olddata;
 	}
-	
-	
+
 	@Override
 	public Leaves updateStatus(Leaves status, int id) {
 		Leaves olddata = null;
@@ -157,18 +157,18 @@ public class ServiceImpl implements Service {
 		}
 		return olddata;
 	}
-	
+
 	@Override
 	public List<Profile> getProjects(int id) {
 		List<Profile> profile = new ArrayList<>();
-		//profile=profileRepository.findById(id);
-		//findAll(id).
-		List<Profile> optionalData=profileRepository.findByCurrentProjectId(id);
+		// profile=profileRepository.findById(id);
+		// findAll(id).
+		List<Profile> optionalData = profileRepository.findByCurrentProjectId(id);
 //		if(!optionalData.isEmpty())
 //		{
 //			profile.add(optionalData.get(id));
 //		}
-        return optionalData;
+		return optionalData;
 	}
 
 	@Override
@@ -179,8 +179,7 @@ public class ServiceImpl implements Service {
 	@Override
 	public Optional<Profile> getProfileData(int id) {
 		Optional<Profile> profile = profileRepository.findById(id);
-		if(profile.isPresent())
-		{
+		if (profile.isPresent()) {
 			profile.get();
 		}
 		return profile;
@@ -189,30 +188,57 @@ public class ServiceImpl implements Service {
 	@Override
 	public List<Profile> getAllProfileData() {
 		List<Profile> profiledata = new ArrayList<>();
-        profileRepository.findAll().forEach(profiledata::add);
+		profileRepository.findAll().forEach(profiledata::add);
 		return profiledata;
 	}
-	 private JavaMailSender javaMailSender;
 
-	    @Autowired
-	    public void EmailService(JavaMailSender javaMailSender){
-	        this.javaMailSender = javaMailSender;
-	    }
+	private JavaMailSender javaMailSender;
+
+	@Autowired
+	public void EmailService(JavaMailSender javaMailSender) {
+		this.javaMailSender = javaMailSender;
+	}
+
 	@Override
-	 public void sendMail(String to, String subject, String body)
-    {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(body);
-        javaMailSender.send(message);
-    }
+	public void sendMail(String to, String subject, String body) {
+		SimpleMailMessage message = new SimpleMailMessage();
+		message.setTo(to);
+		message.setSubject(subject);
+		message.setText(body);
+		javaMailSender.send(message);
+	}
 
 	@Override
 	public List<Task> getTasksData() {
 		List<Task> taskData = new ArrayList<>();
-        taskRepository.findAll().forEach(taskData::add);
+		taskRepository.findAll().forEach(taskData::add);
 		return taskData;
-	}	
+	}
+
+	@Autowired
+	private DocumentRepository documentRepository;
+
+	@Override
+	public Documents store(MultipartFile file) throws IOException {
+		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+		Documents filedata = new Documents(fileName, file.getContentType(), file.getBytes());
+		return documentRepository.save(filedata);
+	}
 	
+	@Override
+	public Documents getFile(int id) {
+		return documentRepository.findById(id).get();
+	}
+
+	@Override
+	public Stream<Documents> getAllFiles() {
+		return documentRepository.findAll().stream();
+	}
+
+	@Override
+	public List<Documents> getDocumentData() {
+		List<Documents> docsData = new ArrayList<>();
+		documentRepository.findAll().forEach(docsData::add);
+		return docsData;	}
+
 }
