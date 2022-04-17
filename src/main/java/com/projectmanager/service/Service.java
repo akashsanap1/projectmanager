@@ -31,6 +31,8 @@ public interface Service {
 	
 	public List<Projects> findAll();
 	
+	public Projects getProject(int pId);
+	
 	public Leaves saveLeave(Leaves leave);
 	
 	public Profile saveProfile(Profile profile);
@@ -64,4 +66,11 @@ public interface Service {
 	public Stream<Documents> getAllFiles();
 	
 	public List<Documents> getDocumentData();
+	
+	public Profile applyForNewProject(Profile profile, int pid);
+	
+	public List<Profile> getProfilesByProjectChangeId(int in);
+	
+	public Profile changeTheProjectInternal(Profile profile , int userId);
+	
 }

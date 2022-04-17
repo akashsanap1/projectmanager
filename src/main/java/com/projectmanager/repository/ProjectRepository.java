@@ -7,5 +7,7 @@ import com.projectmanager.entity.Projects;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<Projects, Integer>{
+	
+	public Projects findBypId(int pId);
 
 }
