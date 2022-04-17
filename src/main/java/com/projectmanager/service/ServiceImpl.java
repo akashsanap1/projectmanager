@@ -86,6 +86,12 @@ public class ServiceImpl implements Service {
 		return projectList;
 
 	}
+	
+	@Override
+	public Projects getProject(int pId)
+	{
+		return projectRepository.findBypId(pId);
+	}
 
 	@Override
 	public Leaves saveLeave(Leaves leaves) {
@@ -117,12 +123,6 @@ public class ServiceImpl implements Service {
 		return leaves;
 	}
 
-//	@Override
-//	public List<LeavesDetails> findAll() {
-//		List<LeavesDetails> leavesList = new ArrayList<>();
-//		leaveRepo.findAll().forEach(leavesList::add);
-//		return leavesList;
-//	}
 
 	// update leave after decline by project managee
 	@Override
@@ -239,6 +239,7 @@ public class ServiceImpl implements Service {
 	public List<Documents> getDocumentData() {
 		List<Documents> docsData = new ArrayList<>();
 		documentRepository.findAll().forEach(docsData::add);
+
 		return docsData;
 	}
 
@@ -330,5 +331,64 @@ public class ServiceImpl implements Service {
 //
 //	        return fileData;
 //	    }
+
+//		return docsData;	
+//		}
+	
+	// apply for new project
+	public Profile applyForNewProject(Profile profile, int pId) {
+		Profile olddata = null;
+		Optional<Profile> optionaluser = profileRepository.findById(pId);
+		if (optionaluser.isPresent()) {
+			olddata = optionaluser.get();
+			System.out.println(olddata);
+			// olddata.setDescription(leaves.getDescription());
+			//olddata.setReason(leaves.getReason());
+			olddata.setNewProject(profile.getNewProject());
+			profileRepository.save(olddata);
+		} else {
+			return new Profile();
+			
+		}
+		return olddata;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// to get profiles who wants to change project change internally
+	public List<Profile >getProfilesByProjectChangeId(int id)
+	{
+		return profileRepository.findByProjectChangeId(id);
+	}
+
+	
+	// change the project by owner of employee
+	@Override
+	public Profile changeTheProjectInternal(Profile profile, int userId) {
+		Profile olddata = null;
+		Optional<Profile > optionaluser = profileRepository.findByuserid(userId);
+		if (optionaluser.isPresent()) {
+			System.out.println("present the dataset");
+			olddata = optionaluser.get();
+			System.out.println(olddata);
+			olddata.setCurrentProject(olddata.getNewProject());
+			olddata.setCurrentProjectId(olddata.getNewProjectId());
+			olddata.setNewProject(null);
+			olddata.setNewProjectId(0);
+			olddata.setProjectChangeId(0);
+			System.out.println(olddata.getNewProject()+""+olddata.getNewProjectId());
+			profileRepository.save(olddata);
+		} else {
+			return new Profile();
+		}
+		return olddata;
+	}
+
 
 }

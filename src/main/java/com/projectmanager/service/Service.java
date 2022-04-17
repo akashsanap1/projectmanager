@@ -31,6 +31,8 @@ public interface Service {
 	
 	public List<Projects> findAll();
 	
+	public Projects getProject(int pId);
+	
 	public Leaves saveLeave(Leaves leave);
 	
 	public Profile saveProfile(Profile profile);
@@ -65,9 +67,18 @@ public interface Service {
 	
 	public List<Documents> getDocumentData();
 	
+
 	public List<Task> getAllTasks(int id);
 	
 	public Task updateStatus(int taskId,Task status);
 	
 	public void sendMailByUser(String email, String subject, String body);
+
+	public Profile applyForNewProject(Profile profile, int pid);
+	
+	public List<Profile> getProfilesByProjectChangeId(int in);
+	
+	public Profile changeTheProjectInternal(Profile profile , int userId);
+	
+
 }

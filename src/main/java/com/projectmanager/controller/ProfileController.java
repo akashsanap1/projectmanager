@@ -5,7 +5,11 @@ import java.nio.file.Path;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
+
+//import org.springframework.core.io.Resource;
+//
+//import org.springframework.boot.context.config.Profiles;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -76,18 +81,26 @@ public class ProfileController {
 	        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + document.getFileName() + "\"")
 	        .body(document.getData());
 	  }
-}
+
 	  
-//	  @GetMapping("{filename:.+}")
-//	    @ResponseBody
-//	    public ResponseEntity<Resource> downloadFile(@PathVariable String filename) throws IOException {
-//	        Resource file = service.download(filename);
-//	        Path path = file.getFile()
-//	                        .toPath();
-//
-//	        return ResponseEntity.ok()
-//	                             .header(HttpHeaders.CONTENT_TYPE, Files.probeContentType(path))
-//	                             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
-//	                            
-//	
-//}
+	  // apply new project 
+	  @PutMapping("/applynewproject/{id}")
+		public Profile update( @PathVariable("id") int pId,@RequestBody Profile profile) {
+			return service.applyForNewProject(profile,pId);
+		}
+	  
+	  // get profiles who applied new projects for internal project change => add employee
+	  @GetMapping("/profilesbychangeid")
+	    public List<Profile> getProfilesByProjectChangeId() {
+	        List<Profile> profile= service.getProfilesByProjectChangeId(1);
+	        return profile;
+	    }
+	  
+	// change in  profiles who applied new projects for internal project change => add employee
+	  @PutMapping("/changeproject/{id}")
+		public Profile changeThePrject( @PathVariable("id") int pId,@RequestBody Profile profile) {
+			return service.changeTheProjectInternal(profile,pId);
+		}
+	
+}
+
