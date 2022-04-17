@@ -64,4 +64,10 @@ public interface Service {
 	public Stream<Documents> getAllFiles();
 	
 	public List<Documents> getDocumentData();
+	
+	public List<Task> getAllTasks(int id);
+	
+	public Task updateStatus(int taskId,Task status);
+	
+	public void sendMailByUser(String email, String subject, String body);
 }

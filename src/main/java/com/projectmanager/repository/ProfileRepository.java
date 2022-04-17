@@ -12,4 +12,5 @@ public interface ProfileRepository extends JpaRepository<Profile, Integer>{
 
 	public Profile findByEmailId(String email);
 	public List<Profile> findByCurrentProjectId(int id);
+	public List<Profile> findAllByEmailId(String email);
 }

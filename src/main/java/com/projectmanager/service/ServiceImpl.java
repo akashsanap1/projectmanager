@@ -224,7 +224,7 @@ public class ServiceImpl implements Service {
 		Documents filedata = new Documents(fileName, file.getContentType(), file.getBytes());
 		return documentRepository.save(filedata);
 	}
-	
+
 	@Override
 	public Documents getFile(int id) {
 		return documentRepository.findById(id).get();
@@ -239,6 +239,96 @@ public class ServiceImpl implements Service {
 	public List<Documents> getDocumentData() {
 		List<Documents> docsData = new ArrayList<>();
 		documentRepository.findAll().forEach(docsData::add);
-		return docsData;	}
+		return docsData;
+	}
+
+	@Override
+	public List<Task> getAllTasks(int id) {
+		// List<Task> Task = new ArrayList<>();
+		List<Task> taskData = new ArrayList<>();
+		taskRepository.findAllByUserid(id).forEach(taskData::add);
+		return taskData;
+	}
+
+	@Override
+	public Task updateStatus(int taskId, Task status) {
+		Task oldstatus = null;
+		Optional<Task> taskdata = taskRepository.findById(taskId);
+		if (taskdata.isPresent()) {
+			oldstatus = taskdata.get();
+			oldstatus.setTaskStatus(status.getTaskStatus());
+			oldstatus.setCompletionDate(status.getCompletionDate());
+			taskRepository.save(oldstatus);
+		} else {
+			return new Task();
+		}
+		return oldstatus;
+	}
+
+	@Override
+	public void sendMailByUser(String to, String subject, String body) {
+		SimpleMailMessage message = new SimpleMailMessage();
+		message.setTo(to);
+		message.setSubject(subject);
+		message.setText(body);
+		javaMailSender.send(message);
+		
+	}
+
+//	 @Value("${files.path}")
+//	    private String filesPath;
+//
+//	    public Resource download(String filename) {
+//	        try {
+//	            Path file = Paths.get(filesPath)
+//	                             .resolve(filename);
+//	            Resource resource = new UrlResource(file.toUri());
+//
+//	            if (resource.exists() || resource.isReadable()) {
+//	                return resource;
+//	            } else {
+//	                throw new RuntimeException("Could not read the file!");
+//	            }
+//	        } catch (MalformedURLException e) {
+//	            throw new RuntimeException("Error: " + e.getMessage());
+//	        }
+//	    }
+//
+//	    public List<FileData> list() {
+//	        try {
+//	            Path root = Paths.get(filesPath);
+//
+//	            if (Files.exists(root)) {
+//	                return Files.walk(root, 1)
+//	                            .filter(path -> !path.equals(root))
+//	                            .filter(path -> path.toFile()
+//	                                                .isFile())
+//	                            .collect(Collectors.toList())
+//	                            .stream()
+//	                            .map(this::pathToFileData)
+//	                            .collect(Collectors.toList());
+//	            }
+//
+//	            return Collections.emptyList();
+//	        } catch (IOException e) {
+//	            throw new RuntimeException("Could not list the files!");
+//	        }
+//	    }
+//
+//	    private FileData pathToFileData(Path path) {
+//	        FileData fileData = new FileData();
+//	        String filename = path.getFileName()
+//	                              .toString();
+//	        fileData.setFilename(filename);
+//
+//	        try {
+//	            fileData.setContentType(Files.probeContentType(path));
+//	            fileData.setSize(Files.size(path));
+//	        } catch (IOException e) {
+//	            throw new RuntimeException("Error: " + e.getMessage());
+//	        }
+//
+//	        return fileData;
+//	    }
 
 }

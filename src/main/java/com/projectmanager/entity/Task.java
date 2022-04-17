@@ -22,67 +22,96 @@ public class Task {
 	String userName;
 	String taskStatus;
 	String currentProjectName;
-
+	
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	Date startDate;
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	Date endDate;
+			
+	String completionDate;
+
 	public int getTaskId() {
 		return taskId;
 	}
+
 	public void setTaskId(int taskId) {
 		this.taskId = taskId;
 	}
+
 	public int getUserid() {
 		return userid;
 	}
+
 	public void setUserid(int userid) {
 		this.userid = userid;
 	}
+
 	public int getCurrentProjectId() {
 		return currentProjectId;
 	}
+
 	public void setCurrentProjectId(int currentProjectId) {
 		this.currentProjectId = currentProjectId;
 	}
+
 	public String getTaskDetails() {
 		return taskDetails;
 	}
+
 	public void setTaskDetails(String taskDetails) {
 		this.taskDetails = taskDetails;
 	}
+
 	public String getUserName() {
 		return userName;
 	}
+
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
+
 	public String getTaskStatus() {
 		return taskStatus;
 	}
+
 	public void setTaskStatus(String taskStatus) {
 		this.taskStatus = taskStatus;
 	}
+
 	public String getCurrentProjectName() {
 		return currentProjectName;
 	}
+
 	public void setCurrentProjectName(String currentProjectName) {
 		this.currentProjectName = currentProjectName;
 	}
+
 	public Date getStartDate() {
 		return startDate;
 	}
+
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
+
 	public Date getEndDate() {
 		return endDate;
 	}
+
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
+
+	public String getCompletionDate() {
+		return completionDate;
+	}
+
+	public void setCompletionDate(String completionDate) {
+		this.completionDate = completionDate;
+	}
+
 	public Task(int taskId, int userid, int currentProjectId, String taskDetails, String userName, String taskStatus,
-			String currentProjectName, Date startDate, Date endDate) {
+			String currentProjectName, Date startDate, Date endDate, String completionDate) {
 		super();
 		this.taskId = taskId;
 		this.userid = userid;
@@ -93,10 +122,11 @@ public class Task {
 		this.currentProjectName = currentProjectName;
 		this.startDate = startDate;
 		this.endDate = endDate;
+		this.completionDate = completionDate;
 	}
+
 	public Task() {
 		super();
 	}
-		
 	
 }
