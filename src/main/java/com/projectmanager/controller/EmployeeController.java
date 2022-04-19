@@ -20,17 +20,4 @@ public class EmployeeController {
 	@Autowired
 	private Service service;
 	
-//	@GetMapping("/getCompleteProfile")
-//    public List<Profile> getLeavesData() {
-//        List<Profile> profile= service.getAllProfileData();
-//        return profile;
-//    }
-	
-
-//	@GetMapping("/getDocuments")
-//  public List<Documents> getDocumentsData() {
-//      List<Documents> docs= service.getDocumentData();
-//      return docs;
-//  }
-
 }

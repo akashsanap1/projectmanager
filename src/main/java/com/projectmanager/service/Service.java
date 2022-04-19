@@ -14,6 +14,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.projectmanager.entity.Admin;
 import com.projectmanager.entity.Documents;
 import com.projectmanager.entity.Leaves;
 import com.projectmanager.entity.Profile;
@@ -60,10 +61,8 @@ public interface Service {
 
 	public List<Task> getTasksData();
 
-	public Documents store(MultipartFile file) throws IOException;
 
 
-	public List<Documents> getDocumentData();
 
 	public List<Task> getAllTasks(int id);
 
@@ -77,14 +76,22 @@ public interface Service {
 
 	public Profile changeTheProjectInternal(Profile profile, int userId);
 
-	public Documents getFile(String id);
 
-	public Stream<Documents> getAllFiles();
-
+	
 	public SystemUser forget(String email);
 
 	SystemUser changePassword(String emailId, SystemUser user);
 	
+
 	public SystemUser changeIdentificationId(int Id);
+
+
+	
+	public Admin fetchAdminByEmailId(String email);
+
+	public Admin fetchAdminByEmailIdAndPassword(String email, String password);
+	
+
+	
 
 }

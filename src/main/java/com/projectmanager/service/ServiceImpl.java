@@ -34,22 +34,24 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.projectmanager.entity.Documents;
+import com.projectmanager.entity.Admin;
+//import com.projectmanager.entity.Documents;
+import com.projectmanager.entity.FileDB;
 import com.projectmanager.entity.Leaves;
 import com.projectmanager.entity.Profile;
 import com.projectmanager.entity.Projects;
 import com.projectmanager.entity.SystemUser;
 import com.projectmanager.entity.Task;
+import com.projectmanager.repository.AdminRepository;
 import com.projectmanager.repository.DocumentRepository;
+import com.projectmanager.repository.FileDBRepository;
 import com.projectmanager.repository.LeaveRepository;
 import com.projectmanager.repository.ProfileRepository;
 import com.projectmanager.repository.ProjectRepository;
 import com.projectmanager.repository.Repository;
 import com.projectmanager.repository.TaskRepository;
 
-
 //import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 
 @org.springframework.stereotype.Service
 public class ServiceImpl implements Service {
@@ -68,6 +70,9 @@ public class ServiceImpl implements Service {
 
 	@Autowired
 	private TaskRepository taskRepository;
+
+	@Autowired
+	private AdminRepository adminRepository;
 
 	@Override
 	public SystemUser saveUser(SystemUser user) {
@@ -100,10 +105,9 @@ public class ServiceImpl implements Service {
 		return projectList;
 
 	}
-	
+
 	@Override
-	public Projects getProject(int pId)
-	{
+	public Projects getProject(int pId) {
 		return projectRepository.findBypId(pId);
 	}
 
@@ -136,7 +140,6 @@ public class ServiceImpl implements Service {
 		leaveRepository.findAll().forEach(leaves::add);
 		return leaves;
 	}
-
 
 	// update leave after decline by project managee
 	@Override
@@ -229,24 +232,6 @@ public class ServiceImpl implements Service {
 		return taskData;
 	}
 
-	@Autowired
-	private DocumentRepository documentRepository;
-
-	@Override
-	public Documents store(MultipartFile file) throws IOException {
-		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-		Documents filedata = new Documents(fileName, file.getContentType(), file.getBytes());
-		return documentRepository.save(filedata);
-	}
-
-
-	@Override
-	public List<Documents> getDocumentData() {
-		List<Documents> docsData = new ArrayList<>();
-		documentRepository.findAll().forEach(docsData::add);
-
-		return docsData;
-	}
 
 	@Override
 	public List<Task> getAllTasks(int id) {
@@ -278,22 +263,10 @@ public class ServiceImpl implements Service {
 		message.setSubject(subject);
 		message.setText(body);
 		javaMailSender.send(message);
-		
+
 	}
-	
-	
-	
-	
-	 public Documents getFile(String id) {
-		    return documentRepository.findById(id).get();
-		  }
-		  
-		  public Stream<Documents> getAllFiles() {
-		    return documentRepository.findAll().stream();
-		  }
-	
-	
-	
+
+
 	// apply for new project
 	public Profile applyForNewProject(Profile profile, int pId) {
 		Profile olddata = null;
@@ -302,40 +275,36 @@ public class ServiceImpl implements Service {
 			olddata = optionaluser.get();
 			System.out.println(olddata);
 			// olddata.setDescription(leaves.getDescription());
-			//olddata.setReason(leaves.getReason());
+			// olddata.setReason(leaves.getReason());
 			olddata.setNewProject(profile.getNewProject());
+			olddata.setNewProjectId(profile.getNewProjectId());
+			olddata.setProjectChangeId(profile.getProjectChangeId());
 			profileRepository.save(olddata);
 		} else {
 			return new Profile();
-			
+
 		}
 		return olddata;
 	}
-	
-	
-	
+
 	// to get profiles who wants to change project change internally
-	public List<Profile >getProfilesByProjectChangeId(int id)
-	{
+	public List<Profile> getProfilesByProjectChangeId(int id) {
 		return profileRepository.findByProjectChangeId(id);
 	}
 
-	
 	// change the project by owner of employee
 	@Override
 	public Profile changeTheProjectInternal(Profile profile, int userId) {
 		Profile olddata = null;
-		Optional<Profile > optionaluser = profileRepository.findByuserid(userId);
+		Optional<Profile> optionaluser = profileRepository.findByuserid(userId);
 		if (optionaluser.isPresent()) {
-			System.out.println("present the dataset");
 			olddata = optionaluser.get();
-			System.out.println(olddata);
 			olddata.setCurrentProject(olddata.getNewProject());
 			olddata.setCurrentProjectId(olddata.getNewProjectId());
 			olddata.setNewProject(null);
 			olddata.setNewProjectId(0);
 			olddata.setProjectChangeId(0);
-			System.out.println(olddata.getNewProject()+""+olddata.getNewProjectId());
+			System.out.println(olddata.getNewProject() + "" + olddata.getNewProjectId());
 			profileRepository.save(olddata);
 		} else {
 			return new Profile();
@@ -345,72 +314,96 @@ public class ServiceImpl implements Service {
 
 	public void sendMailtoReset(String email, String subject, String body) {
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
-		//mailMessage.setFrom(frommail);
+		// mailMessage.setFrom(frommail);
 		mailMessage.setTo(email);
 		mailMessage.setSubject(subject);
 		mailMessage.setText(body);
-		
+
 		javaMailSender.send(mailMessage);
-		
-		  System.out.println("Email Sent Successfully!!");
-		//return "Mail sent sucessfully!!!!  check your email";
-	}	
-	
+
+		System.out.println("Email Sent Successfully!!");
+		// return "Mail sent sucessfully!!!! check your email";
+	}
+
+
+		@Override
+	public SystemUser changeIdentificationId(int id) {
+
+		SystemUser oldId = null;
+		Optional<SystemUser> user = repository.findById(id);
+		if (user.isPresent()) {
+			oldId = user.get();
+			oldId.setNewProfileCheckId(1);
+			repository.save(oldId);
+		} else {
+			return null;
+		}
+		return oldId;
+	}
+
+	@Override
+	public Admin fetchAdminByEmailId(String email) {
+		return this.adminRepository.findByEmailId(email);
+	}
+
+	@Override
+	public Admin fetchAdminByEmailIdAndPassword(String email, String password) {
+		return this.adminRepository.findByEmailIdAndPassword(email, password);
+	}
+
 	// for generate otp
-		@Override
-		public SystemUser forget(String email) {
-			SystemUser olddata=null;
-			olddata=repository.findByEmailId(email);
-			int number=randomNo();
-			olddata.setOtp(number);
-			sendMailtoReset(email,"Reset Password","Do not share this otp"+number);
-			return olddata;
-		}
-		
-		// genarate random no
-		public int randomNo()
-		{
-			int min = 100000;  
-			int max = 999999;  
-			return (int)(Math.random()*(max-min+1)+min);  
-		}
+	@Override
+	public SystemUser forget(String email) {
+		SystemUser olddata = null;
+		olddata = repository.findByEmailId(email);
+		int number = randomNo();
+		olddata.setOtp(number);
+		return olddata;
+	}
 
-		
-		// changePassword
-		@Override
-		public SystemUser changePassword(String emailId, SystemUser user) {
-			
-			SystemUser oldstatus = null;
-			SystemUser user1=repository.findByEmailId(emailId);
-			Optional<SystemUser> data = repository.findByuserid(user1.getUserid());
-			if (data.isPresent()) {
-				oldstatus = data.get();
-				oldstatus.setPassword(user.getPassword());
-				oldstatus.setCpassword(user.getPassword());
-			    repository.save(oldstatus);
-			} else {
-				return new SystemUser();
-			}
-			return oldstatus;
-	
-		}
+	// genarate random no
+	public int randomNo() {
+		int min = 100000;
+		int max = 999999;
+		return (int) (Math.random() * (max - min + 1) + min);
+	}
 
-		@Override
-		public SystemUser changeIdentificationId(int id) {
-			
-			SystemUser oldId=null;
-			Optional<SystemUser> user=repository.findById(id);
-			if(user.isPresent())
-			{
-				oldId=user.get();
-				oldId.setNewProfileCheckId(1);
-				repository.save(oldId);
-			}
-			else
-			{
-				return null;
-			}
-			return oldId;
+	// changePassword
+	@Override
+	public SystemUser changePassword(String emailId, SystemUser user) {
+
+		SystemUser oldstatus = null;
+		SystemUser user1 = repository.findByEmailId(emailId);
+		Optional<SystemUser> data = repository.findByuserid(user1.getUserid());
+		if (data.isPresent()) {
+			oldstatus = data.get();
+			oldstatus.setPassword(user.getPassword());
+			oldstatus.setCpassword(user.getPassword());
+			repository.save(oldstatus);
+		} else {
+			return new SystemUser();
 		}
+		return oldstatus;
+
+	}
+
+	@Autowired
+	FileDBRepository fileDBRepository;
+
+	public FileDB store(MultipartFile file) throws IOException {
+		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+		FileDB FileDB = new FileDB(fileName, file.getContentType(), file.getBytes());
+		return fileDBRepository.save(FileDB);
+	}
+
+	public FileDB getFile(String id) {
+		return fileDBRepository.findById(id).get();
+	}
+
+	public Stream<FileDB> getAllFiles() {
+	    return fileDBRepository.findAll().stream();
+	  }
+
+
 
 }

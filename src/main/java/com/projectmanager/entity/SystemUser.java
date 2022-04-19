@@ -76,9 +76,6 @@ public class SystemUser {
 	public void setNewProfileCheckId(int newProfileCheckId) {
 		this.newProfileCheckId = newProfileCheckId;
 	}
-	public SystemUser() {
-		super();
-	}
 	public SystemUser(String name, int userid, String emailId, String phone, String password, String cpassword,
 			String gender, int authID, int otp, int newProfileCheckId) {
 		super();
@@ -93,5 +90,11 @@ public class SystemUser {
 		this.otp = otp;
 		this.newProfileCheckId = newProfileCheckId;
 	}
-		
+	public SystemUser() {
+		super();
+	}
+
+    
+	
 }
+

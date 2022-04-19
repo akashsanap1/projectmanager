@@ -68,7 +68,6 @@ public class ProfileController {
 		return getDetails;
 	}
 
-
 	// apply new project
 	@PutMapping("/applynewproject/{id}")
 	public Profile update(@PathVariable("id") int pId, @RequestBody Profile profile) {
@@ -89,5 +88,8 @@ public class ProfileController {
 	public Profile changeThePrject(@PathVariable("id") int pId, @RequestBody Profile profile) {
 		return service.changeTheProjectInternal(profile, pId);
 	}
+	  
+	  
+
 	
 }
