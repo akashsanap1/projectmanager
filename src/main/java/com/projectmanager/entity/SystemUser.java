@@ -13,6 +13,9 @@ public class SystemUser {
     private String password;
     private String cpassword;
     private String gender;
+    private int authID;
+    private int otp;
+    private int newProfileCheckId;
 	public String getName() {
 		return name;
 	}
@@ -28,7 +31,7 @@ public class SystemUser {
 	public String getEmailId() {
 		return emailId;
 	}
-	public void setEmail(String emailId) {
+	public void setEmailId(String emailId) {
 		this.emailId = emailId;
 	}
 	public String getPhone() {
@@ -55,8 +58,29 @@ public class SystemUser {
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
+	public int getAuthID() {
+		return authID;
+	}
+	public void setAuthID(int authID) {
+		this.authID = authID;
+	}
+	public int getOtp() {
+		return otp;
+	}
+	public void setOtp(int otp) {
+		this.otp = otp;
+	}
+	public int getNewProfileCheckId() {
+		return newProfileCheckId;
+	}
+	public void setNewProfileCheckId(int newProfileCheckId) {
+		this.newProfileCheckId = newProfileCheckId;
+	}
+	public SystemUser() {
+		super();
+	}
 	public SystemUser(String name, int userid, String emailId, String phone, String password, String cpassword,
-			String gender) {
+			String gender, int authID, int otp, int newProfileCheckId) {
 		super();
 		this.name = name;
 		this.userid = userid;
@@ -65,14 +89,9 @@ public class SystemUser {
 		this.password = password;
 		this.cpassword = cpassword;
 		this.gender = gender;
+		this.authID = authID;
+		this.otp = otp;
+		this.newProfileCheckId = newProfileCheckId;
 	}
-	public SystemUser() {
-		super();
-	}
-	@Override
-	public String toString() {
-		return "SystemUser [name=" + name + ", userid=" + userid + ", emailId=" + emailId + ", phone=" + phone
-				+ ", password=" + password + ", cpassword=" + cpassword + ", gender=" + gender + "]";
-	}
-    
+		
 }

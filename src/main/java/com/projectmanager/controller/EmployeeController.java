@@ -27,10 +27,10 @@ public class EmployeeController {
 //    }
 	
 
-	@GetMapping("/getDocuments")
-  public List<Documents> getDocumentsData() {
-      List<Documents> docs= service.getDocumentData();
-      return docs;
-  }
+//	@GetMapping("/getDocuments")
+//  public List<Documents> getDocumentsData() {
+//      List<Documents> docs= service.getDocumentData();
+//      return docs;
+//  }
 
 }

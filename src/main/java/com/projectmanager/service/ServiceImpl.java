@@ -2,10 +2,17 @@ package com.projectmanager.service;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import javax.mail.Message;
@@ -19,6 +26,9 @@ import javax.mail.internet.MimeMessage;
 import javax.validation.constraints.Email;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.util.StringUtils;
@@ -36,6 +46,10 @@ import com.projectmanager.repository.ProfileRepository;
 import com.projectmanager.repository.ProjectRepository;
 import com.projectmanager.repository.Repository;
 import com.projectmanager.repository.TaskRepository;
+
+
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 
 @org.springframework.stereotype.Service
 public class ServiceImpl implements Service {
@@ -225,15 +239,6 @@ public class ServiceImpl implements Service {
 		return documentRepository.save(filedata);
 	}
 
-	@Override
-	public Documents getFile(int id) {
-		return documentRepository.findById(id).get();
-	}
-
-	@Override
-	public Stream<Documents> getAllFiles() {
-		return documentRepository.findAll().stream();
-	}
 
 	@Override
 	public List<Documents> getDocumentData() {
@@ -275,65 +280,19 @@ public class ServiceImpl implements Service {
 		javaMailSender.send(message);
 		
 	}
-
-//	 @Value("${files.path}")
-//	    private String filesPath;
-//
-//	    public Resource download(String filename) {
-//	        try {
-//	            Path file = Paths.get(filesPath)
-//	                             .resolve(filename);
-//	            Resource resource = new UrlResource(file.toUri());
-//
-//	            if (resource.exists() || resource.isReadable()) {
-//	                return resource;
-//	            } else {
-//	                throw new RuntimeException("Could not read the file!");
-//	            }
-//	        } catch (MalformedURLException e) {
-//	            throw new RuntimeException("Error: " + e.getMessage());
-//	        }
-//	    }
-//
-//	    public List<FileData> list() {
-//	        try {
-//	            Path root = Paths.get(filesPath);
-//
-//	            if (Files.exists(root)) {
-//	                return Files.walk(root, 1)
-//	                            .filter(path -> !path.equals(root))
-//	                            .filter(path -> path.toFile()
-//	                                                .isFile())
-//	                            .collect(Collectors.toList())
-//	                            .stream()
-//	                            .map(this::pathToFileData)
-//	                            .collect(Collectors.toList());
-//	            }
-//
-//	            return Collections.emptyList();
-//	        } catch (IOException e) {
-//	            throw new RuntimeException("Could not list the files!");
-//	        }
-//	    }
-//
-//	    private FileData pathToFileData(Path path) {
-//	        FileData fileData = new FileData();
-//	        String filename = path.getFileName()
-//	                              .toString();
-//	        fileData.setFilename(filename);
-//
-//	        try {
-//	            fileData.setContentType(Files.probeContentType(path));
-//	            fileData.setSize(Files.size(path));
-//	        } catch (IOException e) {
-//	            throw new RuntimeException("Error: " + e.getMessage());
-//	        }
-//
-//	        return fileData;
-//	    }
-
-//		return docsData;	
-//		}
+	
+	
+	
+	
+	 public Documents getFile(String id) {
+		    return documentRepository.findById(id).get();
+		  }
+		  
+		  public Stream<Documents> getAllFiles() {
+		    return documentRepository.findAll().stream();
+		  }
+	
+	
 	
 	// apply for new project
 	public Profile applyForNewProject(Profile profile, int pId) {
@@ -352,12 +311,6 @@ public class ServiceImpl implements Service {
 		}
 		return olddata;
 	}
-	
-	
-	
-	
-	
-	
 	
 	
 	
@@ -390,5 +343,74 @@ public class ServiceImpl implements Service {
 		return olddata;
 	}
 
+	public void sendMailtoReset(String email, String subject, String body) {
+		SimpleMailMessage mailMessage = new SimpleMailMessage();
+		//mailMessage.setFrom(frommail);
+		mailMessage.setTo(email);
+		mailMessage.setSubject(subject);
+		mailMessage.setText(body);
+		
+		javaMailSender.send(mailMessage);
+		
+		  System.out.println("Email Sent Successfully!!");
+		//return "Mail sent sucessfully!!!!  check your email";
+	}	
+	
+	// for generate otp
+		@Override
+		public SystemUser forget(String email) {
+			SystemUser olddata=null;
+			olddata=repository.findByEmailId(email);
+			int number=randomNo();
+			olddata.setOtp(number);
+			sendMailtoReset(email,"Reset Password","Do not share this otp"+number);
+			return olddata;
+		}
+		
+		// genarate random no
+		public int randomNo()
+		{
+			int min = 100000;  
+			int max = 999999;  
+			return (int)(Math.random()*(max-min+1)+min);  
+		}
+
+		
+		// changePassword
+		@Override
+		public SystemUser changePassword(String emailId, SystemUser user) {
+			
+			SystemUser oldstatus = null;
+			SystemUser user1=repository.findByEmailId(emailId);
+			Optional<SystemUser> data = repository.findByuserid(user1.getUserid());
+			if (data.isPresent()) {
+				oldstatus = data.get();
+				oldstatus.setPassword(user.getPassword());
+				oldstatus.setCpassword(user.getPassword());
+			    repository.save(oldstatus);
+			} else {
+				return new SystemUser();
+			}
+			return oldstatus;
+	
+		}
+
+		@Override
+		public SystemUser changeIdentificationId(int id) {
+			
+			SystemUser oldId=null;
+			Optional<SystemUser> user=repository.findById(id);
+			if(user.isPresent())
+			{
+				oldId=user.get();
+				oldId.setNewProfileCheckId(1);
+				repository.save(oldId);
+			}
+			else
+			{
+				return null;
+			}
+			return oldId;
+		}
 
 }

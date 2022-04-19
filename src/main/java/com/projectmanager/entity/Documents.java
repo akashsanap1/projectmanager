@@ -2,61 +2,52 @@ package com.projectmanager.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.Table;
+import javax.validation.constraints.Size;
+
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 public class Documents {
-	
+
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int documentId;
-	private String fileName;
-	private String fileType;
-	@Lob
-	private byte[] data;
-	public int getDocumentId() {
-		return documentId;
+	@Size(max = 60)
+	  @GeneratedValue(generator = "uuid")
+	  @GenericGenerator(name = "uuid", strategy = "uuid2")
+	  private String id;
+	  private String name;
+	  private String type;
+	  @Lob
+	  private byte[] data;
+	  public Documents() {
+	  }
+	  public Documents(String name, String type, byte[] data) {
+	    this.name = name;
+	    this.type = type;
+	    this.data = data;
+	  }
+	  public String getId() {
+	    return id;
+	  }
+	  public String getName() {
+	    return name;
+	  }
+	  public void setName(String name) {
+	    this.name = name;
+	  }
+	  public String getType() {
+	    return type;
+	  }
+	  public void setType(String type) {
+	    this.type = type;
+	  }
+	  public byte[] getData() {
+	    return data;
+	  }
+	  public void setData(byte[] data) {
+	    this.data = data;
+	  }
 	}
-	public void setDocumentId(int documentId) {
-		this.documentId = documentId;
-	}
-	public String getFileName() {
-		return fileName;
-	}
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
-	public String getFileType() {
-		return fileType;
-	}
-	public void setFileType(String fileType) {
-		this.fileType = fileType;
-	}
-	public byte[] getData() {
-		return data;
-	}
-	public void setData(byte[] data) {
-		this.data = data;
-	}
-	public Documents(int documentId, String fileName, String fileType, byte[] data) {
-		super();
-		this.documentId = documentId;
-		this.fileName = fileName;
-		this.fileType = fileType;
-		this.data = data;
-	}
-	public Documents() {
-		super();
-	}
-	public Documents(String fileName, String fileType, byte[] data) {
-		super();
-		this.fileName = fileName;
-		this.fileType = fileType;
-		this.data = data;
-	}
-	
-	
-	
-}
+
