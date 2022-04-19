@@ -25,12 +25,12 @@ public class EmployeeController {
 //        List<Profile> profile= service.getAllProfileData();
 //        return profile;
 //    }
-	
-
-	@GetMapping("/getDocuments")
-  public List<Documents> getDocumentsData() {
-      List<Documents> docs= service.getDocumentData();
-      return docs;
-  }
+//	
+//
+////	@GetMapping("/getDocuments")
+//  public List<Documents> getDocumentsData() {
+//      List<Documents> docs= service.getDocumentData();
+//      return docs;
+//  }
 
 }

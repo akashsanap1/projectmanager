@@ -59,29 +59,6 @@ public class ProfileController {
 	}
 	
 	
-	// File Upload and Download from Document Entity
-	
-	 @PostMapping("/upload")
-	  public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
-	    String message = "";
-	    try {
-	      service.store(file);
-	      message = "Uploaded the file successfully: " + file.getOriginalFilename();
-	      return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
-	    } catch (Exception e) {
-	      message = "Could not upload the file: " + file.getOriginalFilename() + "!";
-	      return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
-	    }
-	  }
-	
-	 @GetMapping("/files/{id}")
-	  public ResponseEntity<byte[]> getFile(@PathVariable int id) {
-	    Documents document = service.getFile(id);
-	    return ResponseEntity.ok()
-	        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + document.getFileName() + "\"")
-	        .body(document.getData());
-	  }
-
 	  
 	  // apply new project 
 	  @PutMapping("/applynewproject/{id}")

@@ -24,13 +24,17 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.projectmanager.entity.Documents;
+import com.projectmanager.entity.Admin;
+//import com.projectmanager.entity.Documents;
+import com.projectmanager.entity.FileDB;
 import com.projectmanager.entity.Leaves;
 import com.projectmanager.entity.Profile;
 import com.projectmanager.entity.Projects;
 import com.projectmanager.entity.SystemUser;
 import com.projectmanager.entity.Task;
+import com.projectmanager.repository.AdminRepository;
 import com.projectmanager.repository.DocumentRepository;
+import com.projectmanager.repository.FileDBRepository;
 import com.projectmanager.repository.LeaveRepository;
 import com.projectmanager.repository.ProfileRepository;
 import com.projectmanager.repository.ProjectRepository;
@@ -54,6 +58,9 @@ public class ServiceImpl implements Service {
 
 	@Autowired
 	private TaskRepository taskRepository;
+	
+	@Autowired
+	private AdminRepository adminRepository;
 
 	@Override
 	public SystemUser saveUser(SystemUser user) {
@@ -215,33 +222,7 @@ public class ServiceImpl implements Service {
 		return taskData;
 	}
 
-	@Autowired
-	private DocumentRepository documentRepository;
 
-	@Override
-	public Documents store(MultipartFile file) throws IOException {
-		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-		Documents filedata = new Documents(fileName, file.getContentType(), file.getBytes());
-		return documentRepository.save(filedata);
-	}
-
-	@Override
-	public Documents getFile(int id) {
-		return documentRepository.findById(id).get();
-	}
-
-	@Override
-	public Stream<Documents> getAllFiles() {
-		return documentRepository.findAll().stream();
-	}
-
-	@Override
-	public List<Documents> getDocumentData() {
-		List<Documents> docsData = new ArrayList<>();
-		documentRepository.findAll().forEach(docsData::add);
-
-		return docsData;
-	}
 
 	@Override
 	public List<Task> getAllTasks(int id) {
@@ -276,64 +257,6 @@ public class ServiceImpl implements Service {
 		
 	}
 
-//	 @Value("${files.path}")
-//	    private String filesPath;
-//
-//	    public Resource download(String filename) {
-//	        try {
-//	            Path file = Paths.get(filesPath)
-//	                             .resolve(filename);
-//	            Resource resource = new UrlResource(file.toUri());
-//
-//	            if (resource.exists() || resource.isReadable()) {
-//	                return resource;
-//	            } else {
-//	                throw new RuntimeException("Could not read the file!");
-//	            }
-//	        } catch (MalformedURLException e) {
-//	            throw new RuntimeException("Error: " + e.getMessage());
-//	        }
-//	    }
-//
-//	    public List<FileData> list() {
-//	        try {
-//	            Path root = Paths.get(filesPath);
-//
-//	            if (Files.exists(root)) {
-//	                return Files.walk(root, 1)
-//	                            .filter(path -> !path.equals(root))
-//	                            .filter(path -> path.toFile()
-//	                                                .isFile())
-//	                            .collect(Collectors.toList())
-//	                            .stream()
-//	                            .map(this::pathToFileData)
-//	                            .collect(Collectors.toList());
-//	            }
-//
-//	            return Collections.emptyList();
-//	        } catch (IOException e) {
-//	            throw new RuntimeException("Could not list the files!");
-//	        }
-//	    }
-//
-//	    private FileData pathToFileData(Path path) {
-//	        FileData fileData = new FileData();
-//	        String filename = path.getFileName()
-//	                              .toString();
-//	        fileData.setFilename(filename);
-//
-//	        try {
-//	            fileData.setContentType(Files.probeContentType(path));
-//	            fileData.setSize(Files.size(path));
-//	        } catch (IOException e) {
-//	            throw new RuntimeException("Error: " + e.getMessage());
-//	        }
-//
-//	        return fileData;
-//	    }
-
-//		return docsData;	
-//		}
 	
 	// apply for new project
 	public Profile applyForNewProject(Profile profile, int pId) {
@@ -345,6 +268,8 @@ public class ServiceImpl implements Service {
 			// olddata.setDescription(leaves.getDescription());
 			//olddata.setReason(leaves.getReason());
 			olddata.setNewProject(profile.getNewProject());
+			olddata.setNewProjectId(profile.getNewProjectId());
+			olddata.setProjectChangeId(profile.getProjectChangeId());
 			profileRepository.save(olddata);
 		} else {
 			return new Profile();
@@ -374,9 +299,7 @@ public class ServiceImpl implements Service {
 		Profile olddata = null;
 		Optional<Profile > optionaluser = profileRepository.findByuserid(userId);
 		if (optionaluser.isPresent()) {
-			System.out.println("present the dataset");
 			olddata = optionaluser.get();
-			System.out.println(olddata);
 			olddata.setCurrentProject(olddata.getNewProject());
 			olddata.setCurrentProjectId(olddata.getNewProjectId());
 			olddata.setNewProject(null);
@@ -389,6 +312,73 @@ public class ServiceImpl implements Service {
 		}
 		return olddata;
 	}
+
+	@Override
+	public Admin fetchAdminByEmailId(String email) {
+		return this.adminRepository.findByEmailId(email);
+	}
+
+	@Override
+	public Admin fetchAdminByEmailIdAndPassword(String email, String password) {
+		return this.adminRepository.findByEmailIdAndPassword(email, password);
+	}
+
+	// for generate otp
+	@Override
+	public SystemUser forget(String email) {
+		SystemUser olddata=null;
+		olddata=repository.findByEmailId(email);
+		int number=randomNo();
+		olddata.setOtp(number);
+		return olddata;
+	}
+	
+	// genarate random no
+	public int randomNo()
+	{
+		int min = 100000;  
+		int max = 999999;  
+		return (int)(Math.random()*(max-min+1)+min);  
+	}
+
+	
+	// changePassword
+	@Override
+	public SystemUser changePassword(String emailId, SystemUser user) {
+		
+		SystemUser oldstatus = null;
+		SystemUser user1=repository.findByEmailId(emailId);
+		Optional<SystemUser> data = repository.findByuserid(user1.getUserid());
+		if (data.isPresent()) {
+			oldstatus = data.get();
+			oldstatus.setPassword(user.getPassword());
+			oldstatus.setCpassword(user.getPassword());
+		    repository.save(oldstatus);
+		} else {
+			return new SystemUser();
+		}
+		return oldstatus;
+		
+			}
+	
+	
+	
+	 @Autowired
+	   FileDBRepository fileDBRepository;
+	  public FileDB store(MultipartFile file) throws IOException {
+	    String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+	    FileDB FileDB = new FileDB(fileName, file.getContentType(), file.getBytes());
+	    return fileDBRepository.save(FileDB);
+	  }
+	  public FileDB getFile(String id) {
+	    return fileDBRepository.findById(id).get();
+	  }
+	  
+	  public Stream<FileDB> getAllFiles() {
+	    return fileDBRepository.findAll().stream();
+	  }
+	
+	
 
 
 }

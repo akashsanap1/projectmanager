@@ -13,6 +13,7 @@ import javax.validation.constraints.Email;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.projectmanager.entity.Admin;
 import com.projectmanager.entity.Documents;
 import com.projectmanager.entity.Leaves;
 import com.projectmanager.entity.Profile;
@@ -59,13 +60,13 @@ public interface Service {
 	
 	public List<Task> getTasksData();
 	
-	public Documents store(MultipartFile file) throws IOException;
-	
-	public Documents getFile(int id);
-	
-	public Stream<Documents> getAllFiles();
-	
-	public List<Documents> getDocumentData();
+//	public Documents store(MultipartFile file) throws IOException;
+//	
+//	public Documents getFile(int id);
+//	
+//	public Stream<Documents> getAllFiles();
+//	
+//	public List<Documents> getDocumentData();
 	
 
 	public List<Task> getAllTasks(int id);
@@ -80,5 +81,12 @@ public interface Service {
 	
 	public Profile changeTheProjectInternal(Profile profile , int userId);
 	
+	public Admin fetchAdminByEmailId(String email);
+
+	public Admin fetchAdminByEmailIdAndPassword(String email, String password);
+	
+	public SystemUser forget(String email);
+	
+	public SystemUser changePassword(String emailId,SystemUser user);
 
 }

@@ -13,6 +13,25 @@ public class SystemUser {
     private String password;
     private String cpassword;
     private String gender;
+    private int authID;
+    private int otp;
+	public SystemUser() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public SystemUser(String name, int userid, String emailId, String phone, String password, String cpassword,
+			String gender, int authID, int otp) {
+		super();
+		this.name = name;
+		this.userid = userid;
+		this.emailId = emailId;
+		this.phone = phone;
+		this.password = password;
+		this.cpassword = cpassword;
+		this.gender = gender;
+		this.authID = authID;
+		this.otp = otp;
+	}
 	public String getName() {
 		return name;
 	}
@@ -28,7 +47,7 @@ public class SystemUser {
 	public String getEmailId() {
 		return emailId;
 	}
-	public void setEmail(String emailId) {
+	public void setEmailId(String emailId) {
 		this.emailId = emailId;
 	}
 	public String getPhone() {
@@ -55,24 +74,18 @@ public class SystemUser {
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
-	public SystemUser(String name, int userid, String emailId, String phone, String password, String cpassword,
-			String gender) {
-		super();
-		this.name = name;
-		this.userid = userid;
-		this.emailId = emailId;
-		this.phone = phone;
-		this.password = password;
-		this.cpassword = cpassword;
-		this.gender = gender;
+	public int getAuthID() {
+		return authID;
 	}
-	public SystemUser() {
-		super();
+	public void setAuthID(int authID) {
+		this.authID = authID;
 	}
-	@Override
-	public String toString() {
-		return "SystemUser [name=" + name + ", userid=" + userid + ", emailId=" + emailId + ", phone=" + phone
-				+ ", password=" + password + ", cpassword=" + cpassword + ", gender=" + gender + "]";
+	public int getOtp() {
+		return otp;
+	}
+	public void setOtp(int otp) {
+		this.otp = otp;
 	}
     
+	
 }
