@@ -91,7 +91,12 @@ public interface Service {
 
 	public Admin fetchAdminByEmailIdAndPassword(String email, String password);
 	
-
+	public Optional<Profile> getProfileForProjectChangeByManager(int userId);
+	
+	public Profile applyNewProjectIn(Profile profile, int pId);
+	
+	
+	
 	
 
 }

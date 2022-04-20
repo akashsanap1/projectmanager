@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 //import java.nio.file.Path;
 //import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -89,7 +91,17 @@ public class ProfileController {
 		return service.changeTheProjectInternal(profile, pId);
 	}
 	  
-	  
+	@GetMapping("/profile/{id}")
+	public  Optional<Profile> getProfil(@PathVariable("id") int userId) {
+		Optional<Profile> profile = service.getProfileForProjectChangeByManager(userId);
+		return profile;
+	}
+	
+	@PutMapping("/applyinternalproject/{id}")
+	public Profile updateadminProject(@PathVariable ("id") int id, @RequestBody Profile  profile)
+	{
+		return service.applyNewProjectIn(profile,id);
+	}
 
 	
 }

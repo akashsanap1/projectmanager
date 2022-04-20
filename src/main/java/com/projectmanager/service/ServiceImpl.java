@@ -195,7 +195,7 @@ public class ServiceImpl implements Service {
 
 	@Override
 	public Optional<Profile> getProfileData(int id) {
-		Optional<Profile> profile = profileRepository.findById(id);
+		Optional<Profile> profile = profileRepository.findByuserid(id);
 		if (profile.isPresent()) {
 			profile.get();
 		}
@@ -270,7 +270,7 @@ public class ServiceImpl implements Service {
 	// apply for new project
 	public Profile applyForNewProject(Profile profile, int pId) {
 		Profile olddata = null;
-		Optional<Profile> optionaluser = profileRepository.findById(pId);
+		Optional<Profile> optionaluser = profileRepository.findByuserid(pId);
 		if (optionaluser.isPresent()) {
 			olddata = optionaluser.get();
 			System.out.println(olddata);
@@ -404,6 +404,31 @@ public class ServiceImpl implements Service {
 	    return fileDBRepository.findAll().stream();
 	  }
 
+	
+	
+	// =employeeList>
+	@Override
+	public Optional<Profile> getProfileForProjectChangeByManager(int userId) {
+		return profileRepository.findByuserid(userId);
+	}
+
+	// =wmployeeList>
+	// apply for new project
+		public Profile applyNewProjectIn(Profile profile, int pId) {
+			Profile olddata = null;
+			Optional<Profile> optionaluser = profileRepository.findByuserid(pId);
+			System.out.println(optionaluser.toString());
+			if (optionaluser.isPresent()) {
+				olddata = optionaluser.get();
+				olddata.setCurrentProject(profile.getCurrentProject());
+				olddata.setCurrentProjectId(profile.getCurrentProjectId());
+				profileRepository.save(olddata);
+			} else {
+				return new Profile();
+
+			}
+			return olddata;
+		}
 
 
 }
